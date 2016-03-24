@@ -1,3 +1,8 @@
+#include <C8051F38x.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+
 void UART1_Init (unsigned long baudrate)
 {
 	SMOD1 = 0x0C; // no parity, 8 data bits, 1 stop bit
