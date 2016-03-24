@@ -170,6 +170,45 @@ void main (void)
 	float d, d1, d2;
 	int field_present; //take signal from comparator and convert to logic (1=on, 0=off)
 	
+	AD0BUSY=1;
+	while (AD0BUSY); // Wait for conversion to complete
+
+	while(1)
+	{
+		//printf("\x1B[6;1H"); // ANSI escape sequence: move to row 6, column 1
+
+		for(j=0; j<2; j++)
+		{
+			AD0BUSY = 1; // Start ADC 0 conversion to measure previously selected input
+			
+			// Select next channel while ADC0 is busy
+			switch(j)
+			{
+				case 0:
+					AMX0P=LQFP32_MUX_P2_0;
+				break;
+				case 1:
+					AMX0P=LQFP32_MUX_P2_1;
+				break;
+			}
+			
+			while (AD0BUSY); // Wait for conversion to complete
+			v = ((ADC0L+(ADC0H*0x100))*VDD)/1023.0; // Read 0-1023 value in ADC0 and convert to volts
+			
+			// Display measured values
+			switch(j)
+			{
+				case 0:
+					d1=v;
+				break;
+				case 1:
+					d2=v;
+				break;
+			}
+
+		}
+	 
+	
 	if (d1>d){
 		//move motor 1 back
 	}
@@ -184,6 +223,8 @@ void main (void)
 	
 	if (d2<d){
 		//move motor 2 forward
+	}
+	
 	}
 }
 	
