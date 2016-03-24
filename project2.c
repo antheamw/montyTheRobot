@@ -11,9 +11,6 @@
 
 char _c51_external_startup (void)
 {
-
-	// [START standard F38x startup code]
-	
 	PCA0MD&=(~0x40) ;    // DISABLE WDT: clear Watchdog Enable bit
 	VDM0CN=0x80; // enable VDD monitor
 	RSTSRC=0x02|0x04; // Enable reset on missing clock detector and VDD
@@ -29,65 +26,46 @@ char _c51_external_startup (void)
 		#error SYSCLK must be either 12000000L, 24000000L, or 48000000L
 	#endif
 	OSCICN |= 0x03; // Configure internal oscillator for its maximum frequency
-	RSTSRC  = 0x04;   // Enable missing clock detector
 
 	// Configure UART0
 	SCON0 = 0x10; 
-	#if (SYSCLK/BAUDRATE/2L/256L < 1)
+#if (SYSCLK/BAUDRATE/2L/256L < 1)
 	TH1 = 0x10000-((SYSCLK/BAUDRATE)/2L);
 	CKCON &= ~0x0B;                  // T1M = 1; SCA1:0 = xx
 	CKCON |=  0x08;
-	#elif (SYSCLK/BAUDRATE/2L/256L < 4)
+#elif (SYSCLK/BAUDRATE/2L/256L < 4)
 	TH1 = 0x10000-(SYSCLK/BAUDRATE/2L/4L);
 	CKCON &= ~0x0B; // T1M = 0; SCA1:0 = 01                  
 	CKCON |=  0x01;
-	#elif (SYSCLK/BAUDRATE/2L/256L < 12)
+#elif (SYSCLK/BAUDRATE/2L/256L < 12)
 	TH1 = 0x10000-(SYSCLK/BAUDRATE/2L/12L);
 	CKCON &= ~0x0B; // T1M = 0; SCA1:0 = 00
-	#else
+#else
 	TH1 = 0x10000-(SYSCLK/BAUDRATE/2/48);
 	CKCON &= ~0x0B; // T1M = 0; SCA1:0 = 10
 	CKCON |=  0x02;
-	#endif
+#endif
 	TL1 = TH1;      // Init Timer1
 	TMOD &= ~0xf0;  // TMOD: timer 1 in 8-bit autoreload
 	TMOD |=  0x20;                       
 	TR1 = 1; // START Timer1
 	TI = 1;  // Indicate TX0 ready
-		
+	
+	// Configure the pins used for square output
+	P2MDOUT|=0b_0000_0011;
+	P0MDOUT |= 0x10; // Enable UTX as push-pull output
+	XBR0     = 0x01; // Enable UART on P0.4(TX) and P0.5(RX)                     
+	XBR1     = 0x40; // Enable crossbar and weak pull-ups
 
-	// [END standard F38x startup code]
-
-	P2MDOUT|=0b_0111_1111; // Set motor control pins
-	
-	// Configure P2.1, P2.6, P2.0 and P2.7 as analog input
-	P2MDIN &= 0b_0011_1100; // P2.1, P2.6, P2.0 and P2.7
-	P2SKIP |= 0b_1100_0011; // Skip Crossbar decoding for these pins
-	
-	// Init ADC
-	ADC0CF = 0xF8; // SAR clock = 31, Right-justified result
-	ADC0CN = 0b_1000_0000; // AD0EN=1, AD0TM=0
-  	REF0CN=0b_0000_1000; //Select VDD as the voltage reference for the converter
-  	
-	VDM0CN=0x80;       // enable VDD monitor
-	RSTSRC=0x02|0x04;  // Enable reset on missing clock detector and VDD
-	P0MDOUT|=0x10;     // Enable Uart TX as push-pull output
-	P1MDOUT|=0b_1111_1111;
-	XBR0=0x01;         // Enable UART on P0.4(TX) and P0.5(RX)
-	XBR1=0x40;         // Enable crossbar and weak pull-ups
-	
-	// Configure pin 0_1 to trigger an interrupt
-	IT0 = 1;
-	EX0 = 1;
-	IT01CF|=0b_0000_0001;
-	
 	// Initialize timer 2 for periodic interrupts
 	TMR2CN=0x00;   // Stop Timer2; Clear TF2;
 	CKCON|=0b_0001_0000;
-	TMR2RL=(-(SYSCLK/(DEFAULT_F))); // Initialize reload value
+	TMR2RL=(-(SYSCLK/(2*48))/(100L)); // Initialize reload value
 	TMR2=0xffff;   // Set to reload immediately
 	ET2=1;         // Enable Timer2 interrupts
 	TR2=1;         // Start Timer2
+
+	EA=1; // Enable interrupts
 	
 	return 0;
 }
