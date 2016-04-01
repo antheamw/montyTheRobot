@@ -8,11 +8,16 @@
 #define		SYSCLK         48000000L // System clock frequency in Hz
 #define		BAUDRATE       115200L
 #define		SMB_FREQUENCY  100000L   // I2C SCL clock rate (10kHz to 100kHz)
-#define         DEFAULT_F 10300L
+#define     DEFAULT_F      10300L
 
+//motors
+#define RIGHT0 P2_0
+#define RIGHT1 P2_1
+#define LEFT0 P2_2
+#define LEFT1 P2_3
 
 //commands
-#define 	AUTO	0x0F
+#define 	AUTO	//0x0F
 
 #define 	MOV_DEF 0x80
 
@@ -39,6 +44,7 @@
 #define 	AIM_DR	0x45
 
 #define 	AIM_S	0x50    // shoot
+
 
 //initialize uart
 void UART1_Init (unsigned long baudrate)
@@ -179,11 +185,105 @@ char getchar1 (void)
 
 void main (void)
 {
-	char command;
+	char byte=0;
+	int command;
 	
 	while(1)
 	{
-		command = getchar1();
+		//get command
+		byte = getchar1();
+		//convert from hex to decimal
+		command = strtol (byte, char** endptr, int base);
+		//compare command to define statement 
+		if (command==AUTO){
+			printf("a");
+		}
+		
+		else if (command==MOV_DEF){
+			RIGHT0=0;
+			RIGHT1=0;
+			LEFT0=0;
+			LEFT1=0;
+		}	
+
+		else if (command==MOV_R){
+			RIGHT0=0;
+			RIGHT1=1;
+			LEFT0=1;
+			LEFT1=0;
+		}	
+			
+		else if (command==MOV_L){
+			RIGHT0=1;
+			RIGHT1=0;
+			LEFT0=0;
+			LEFT1=1;
+		}
+		
+		else if (command==MOV_U){
+			RIGHT0=1;
+			RIGHT1=0;
+			LEFT0=1;
+			LEFT1=0;
+		}
+
+		else if (command==MOV_D){
+			RIGHT0=0;
+			RIGHT1=1;
+			LEFT0=0;
+			LEFT1=1;
+		}
+
+		else if (command==MOV_UR){
+			RIGHT0=0;
+			RIGHT1=0;
+			LEFT0=1;
+			LEFT1=0;
+		}
+
+		else if (command==MOV_UL){
+			RIGHT0=1;
+			RIGHT1=0;
+			LEFT0=0;
+			LEFT1=0;
+		}
+		
+		else if	(command==MOV_DR){
+			RIGHT0=0;
+			RIGHT1=0;
+			LEFT0=0;
+			LEFT1=1;
+		}
+
+		else {//(command==MOV_DL){
+			RIGHT0=0;
+			RIGHT1=1;
+			LEFT0=0;
+			LEFT1=0;
+		}
+/*
+		if(input==gunright){
+
+		}
+if(input==gunleft){
+
+}
+if(input==gunup){
+
+}
+if(input==gundown){
+
+}
+if(input==shoot){
+
+}
+if(input==laseron){
+
+}
+if(input==laseroff){
+
+}*/
 	}
+	
 	
 }
