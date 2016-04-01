@@ -148,7 +148,6 @@ char _c51_external_startup (void)
 
 	EA = 1;
 
-	LED = LED_OFF;
 	
 	return 0;
 }
