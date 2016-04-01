@@ -8,6 +8,8 @@
 #define		SYSCLK         48000000L // System clock frequency in Hz
 #define		BAUDRATE       115200L
 #define		SMB_FREQUENCY  100000L   // I2C SCL clock rate (10kHz to 100kHz)
+#define         DEFAULT_F 10300L
+
 
 //commands
 #define 	AUTO	0x0F
@@ -177,7 +179,7 @@ char getchar1 (void)
 
 void main (void)
 {
-	char command[8];
+	char command;
 	
 	while(1)
 	{
