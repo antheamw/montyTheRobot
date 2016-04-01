@@ -17,7 +17,7 @@
 #define LEFT1 P2_3
 
 //commands
-#define 	AUTO	//0x0F
+#define 	AUTO	0x0F
 
 #define 	MOV_DEF 0x80
 
@@ -185,15 +185,13 @@ char getchar1 (void)
 
 void main (void)
 {
-	char byte=0;
-	int command;
+
+	unsigned char command;
 	
 	while(1)
 	{
-		//get command
-		byte = getchar1();
-		//convert from hex to decimal
-		command = strtol (byte, char** endptr, int base);
+		command = getchar1();
+		
 		//compare command to define statement 
 		if (command==AUTO){
 			printf("a");
