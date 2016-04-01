@@ -177,5 +177,11 @@ char getchar1 (void)
 
 void main (void)
 {
+	char command[8];
+	
+	while(1)
+	{
+		command = getchar1();
+	}
 	
 }
