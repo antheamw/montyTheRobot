@@ -56,8 +56,8 @@
 
 #define		THRESHOLD 0.08	//+/- 80mV for voltage measurement
 
-volatile float current_voltage1
-volatile float current_voltage2
+volatile float current_voltage1;
+volatile float current_voltage2;
 
 //initialize uart
 void UART1_Init (unsigned long baudrate)
@@ -251,7 +251,9 @@ void get_currentVoltage(void)
 			
 		{
 	}
-	return;  
+ 
+}
+}
 }
 
 void main (void)
@@ -260,7 +262,6 @@ void main (void)
 	unsigned char command;
 	float d1;
 	float d2;
-	float d;
 	printf("\x1b[2J"); // Clear screen using ANSI escape sequence.
 	
 	printf ("ADC/Multiplexer test program\n"
@@ -439,5 +440,6 @@ void main (void)
 	
 		
 	 }  
+
 }	
 
