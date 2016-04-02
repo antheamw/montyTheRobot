@@ -49,7 +49,7 @@
 
 #define 	AIM_S	0x50    // shoot
 
-
+#define     d        0.6 //60cm = d = 0.600V
 //initialize uart
 void UART1_Init (unsigned long baudrate)
 {
