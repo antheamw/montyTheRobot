@@ -11,10 +11,11 @@
 #define     DEFAULT_F      10300L
 
 //motors
-#define RIGHT0 P2_0
-#define RIGHT1 P2_1
-#define LEFT0 P2_2
-#define LEFT1 P2_3
+
+#define LEFT1 P2_5
+#define LEFT0 P2_4
+#define RIGHT1 P2_7
+#define RIGHT0 P2_6
 
 //commands
 #define 	AUTO	0x0F
@@ -169,7 +170,7 @@ char _c51_external_startup (void)
 	
 	return 0;
 }
-
+/*
 // Uses Timer3 to delay <us> micro-seconds. 
 void Timer3us(unsigned char us)
 {
@@ -198,7 +199,7 @@ void waitms (unsigned int ms)
 		for (k=0; k<4; k++) Timer3us(250);
 }
 
-
+*/
 void putchar1 (char c)
 {
 	if (c == '\n' )
