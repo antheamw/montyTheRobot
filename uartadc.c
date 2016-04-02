@@ -251,7 +251,7 @@ void get_currentVoltage(void)
 			
 		{
 	}
-	//return;  (needed?)
+	return;  
 }
 
 void main (void)
