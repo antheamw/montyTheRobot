@@ -281,13 +281,12 @@ void main (void)
 	
 		command = getchar1();
 		printf("%u\n", command);
-		
+		get_currentVoltage();
+		d1 = current_voltage1;
+		d2 = current_voltage2;
 		//compare command to define statement 
 		if (command==AUTO){
 			printf("auto\n");
-			get_currentVoltage();
-			d1 = current_voltage1;
-			d2 = current_voltage2;
 			//keep the robot 60cm away
 			//buffer zone of d-THRESHOLD < d1 < d+THRESHOLD (d1<d)
 			/*
