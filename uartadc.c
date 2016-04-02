@@ -49,7 +49,12 @@
 
 #define 	AIM_S	0x50    // shoot
 
-#define     d        0.6 //60cm = d = 0.600V
+#define     	d        0.6 	//60cm - distance to keep in AUTO mode
+#define 	dmin     3.48	//15cm - closest distance btwn trans & rec
+#define 	dmax	 0.4	//75cm - farthest distance btwn trans & rec
+
+#define		THRESHOLD 0.08	//+/- 80mV for voltage measurement
+
 //initialize uart
 void UART1_Init (unsigned long baudrate)
 {
@@ -206,9 +211,9 @@ void main (void)
 	float v;
 	unsigned char j;
 	unsigned char command;
-	float d1=0.3;
-	float d2=0.3;
-	float d= 0.3;
+	float d1;
+	float d2;
+	float d;
 	printf("\x1b[2J"); // Clear screen using ANSI escape sequence.
 	
 	printf ("ADC/Multiplexer test program\n"
@@ -310,24 +315,24 @@ void main (void)
 		if(input==gunright){
 
 		}
-if(input==gunleft){
+		if(input==gunleft){
 
-}
-if(input==gunup){
+		}
+		if(input==gunup){
 
-}
-if(input==gundown){
+		}
+		if(input==gundown){
 
-}
-if(input==shoot){
+		}
+		if(input==shoot){
 
-}
-if(input==laseron){
+		}
+		if(input==laseron){
 
-}
-if(input==laseroff){
+		}
+		if(input==laseroff){
 
-}*/
+		}*/
 		printf("\x1B[6;1H"); // ANSI escape sequence: move to row 6, column 1
 
 		for(j=0; j<NUM_INS; j++)
@@ -365,45 +370,44 @@ if(input==laseroff){
 		}
 		
 	
-	if (d1<d){
-		//move motor 1 and 2 forward
-		RIGHT0=1;
-		RIGHT1=0;
-		LEFT0=1;
-		LEFT1=0;
+		if (d1<d){
+			//move motor 1 and 2 forward
+			RIGHT0=1;
+			RIGHT1=0;
+			LEFT0=1;
+			LEFT1=0;
 
-printf("forwards");
-	}
+			printf("forwards");
+		}
 	
-	else if (d1>d){
-		//move motor 2 and 1 backward
-		RIGHT0=0;
-		RIGHT1=1;
-		LEFT0=0;
-		LEFT1=1;
-		printf("backwards");
-
-	}
+		else if (d1>d){
+			//move motor 2 and 1 backward
+			RIGHT0=0;
+			RIGHT1=1;
+			LEFT0=0;
+			LEFT1=1;
+			printf("backwards");
+		}
+		
 		else if (d1>d2){
-		//move right back and left forward(turn right)
-		RIGHT0=0;
-		RIGHT1=1;
-		LEFT0=1;
-		LEFT1=0;
+			//move right back and left forward(turn right)
+			RIGHT0=0;
+			RIGHT1=1;
+			LEFT0=1;
+			LEFT1=0;
 		
-printf("right");
-	}
-	
-	else if (d2>d1){
-		//move left back and right forward (turn left)
-		RIGHT0=1;
-		RIGHT1=0;
-		LEFT0=0;
-		LEFT1=1;
+			printf("right");
+		}
 		
-printf("left");
-	}
-	printf("\x1B[K"); // ANSI escape sequence: Clear to end of line
+		else if (d2>d1){
+			//move left back and right forward (turn left)
+			RIGHT0=1;
+			RIGHT1=0;
+			LEFT0=0;
+			LEFT1=1;
+			printf("left");
+		}
+		printf("\x1B[K"); // ANSI escape sequence: Clear to end of line
 		waitms(100);  // Wait 100ms before next round of measurements.
 	 }  
 }	
