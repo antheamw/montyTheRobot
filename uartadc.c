@@ -49,11 +49,15 @@
 
 #define 	AIM_S	0x50    // shoot
 
+//variables for certain distances 
 #define     	d        0.6 	//60cm - distance to keep in AUTO mode
 #define 	dmin     3.48	//15cm - closest distance btwn trans & rec
 #define 	dmax	 0.4	//75cm - farthest distance btwn trans & rec
 
 #define		THRESHOLD 0.08	//+/- 80mV for voltage measurement
+
+volatile float current_voltage1
+volatile float current_voltage2
 
 //initialize uart
 void UART1_Init (unsigned long baudrate)
@@ -206,10 +210,53 @@ char getchar1 (void)
 	return (c);
 }
 
-void main (void)
+//function to get current voltage from P2.0 P2.1
+//returns voltage in global variable
+void get_currentVoltage(void)
 {
 	float v;
 	unsigned char j;
+	printf("\x1B[6;1H"); // ANSI escape sequence: move to row 6, column 1
+
+	for(j=0; j<NUM_INS; j++)
+	{
+		AD0BUSY = 1; // Start ADC 0 conversion to measure previously selected input
+			
+		// Select next channel while ADC0 is busy
+		switch(j)
+		{
+			case 0:
+				AMX0P=LQFP32_MUX_P2_1;
+			break;
+			case 1:
+				AMX0P=LQFP32_MUX_P2_0;
+			break;
+			
+		}
+			
+		while (AD0BUSY); // Wait for conversion to complete
+		v = ((ADC0L+(ADC0H*0x100))*VDD)/1023.0; // Read 0-1023 value in ADC0 and convert to volts
+			
+		// Display measured values
+		switch(j)
+		{
+			case 0:
+				printf("V0=%5.3fV, ", v);
+				current_voltage1=v;
+			break;
+			case 1:
+				printf("V1=%5.3fV, ", v);
+				current_voltage2=v;
+			break;
+			
+		{
+	}
+	//return;  (needed?)
+}
+
+void main (void)
+{
+	
 	unsigned char command;
 	float d1;
 	float d2;
@@ -237,6 +284,61 @@ void main (void)
 		//compare command to define statement 
 		if (command==AUTO){
 			printf("auto\n");
+			get_currentVoltage();
+			d1 = current_voltage1;
+			d2 = current_voltage2;
+			//keep the robot 60cm away
+			//buffer zone of d-THRESHOLD < d1 < d+THRESHOLD (d1<d)
+			/*
+			if ((d1>(d-THRESHOLD))&&(d1<(d+THRESHOLD))){
+				//move motor 1 and 2 forward
+				RIGHT0=1;
+				RIGHT1=0;
+				LEFT0=1;
+				LEFT1=0;
+				printf("forwards");
+			} */
+			
+			if (d1 < d - THRESHOLD)		// if d1 is further back than desired d including threshold
+			{
+				//move motor 1 and 2 forward
+				RIGHT0=1;
+				RIGHT1=0;
+				LEFT0=1;
+				LEFT1=0;
+				printf("forwards");
+			}
+			
+			//buffer zone of 
+			else if (d1 > d + THRESHOLD){		// if d1 is closer than desired d + threshold
+				//move motor 2 and 1 backward
+				RIGHT0=0;
+				RIGHT1=1;
+				LEFT0=0;
+				LEFT1=1;
+				printf("backwards");
+			}
+		
+			else if (d1>d2){
+				//move right back and left forward(turn right)
+				RIGHT0=0;
+				RIGHT1=1;
+				LEFT0=1;
+				LEFT1=0;
+				printf("right");
+			}
+		
+			else if (d2>d1){
+				//move left back and right forward (turn left)
+				RIGHT0=1;
+				RIGHT1=0;
+				LEFT0=0;
+				LEFT1=1;
+				printf("left");
+			}
+			printf("\x1B[K"); // ANSI escape sequence: Clear to end of line
+			waitms(100);  // Wait 100ms before next round of measurements.
+			
 		}
 		
 		else if (command==MOV_DEF){
@@ -303,7 +405,6 @@ void main (void)
 			printf("down right\n");
 		}
 		
-
 		else {//(command==MOV_DL){
 			RIGHT0=0;
 			RIGHT1=1;
@@ -333,82 +434,10 @@ void main (void)
 		if(input==laseroff){
 
 		}*/
-		printf("\x1B[6;1H"); // ANSI escape sequence: move to row 6, column 1
-
-		for(j=0; j<NUM_INS; j++)
-		{
-			AD0BUSY = 1; // Start ADC 0 conversion to measure previously selected input
-			
-			// Select next channel while ADC0 is busy
-			switch(j)
-			{
-				case 0:
-					AMX0P=LQFP32_MUX_P2_1;
-				break;
-				case 1:
-					AMX0P=LQFP32_MUX_P2_0;
-				break;
-			
-			}
-			
-			while (AD0BUSY); // Wait for conversion to complete
-			v = ((ADC0L+(ADC0H*0x100))*VDD)/1023.0; // Read 0-1023 value in ADC0 and convert to volts
-			
-			// Display measured values
-			switch(j)
-			{
-				case 0:
-					printf("V0=%5.3fV, ", v);
-					d1=v;
-				break;
-				case 1:
-					printf("V1=%5.3fV, ", v);
-					d2=v;
-				break;
-			}
-
-		}
+		
 		
 	
-		if (d1<d){
-			//move motor 1 and 2 forward
-			RIGHT0=1;
-			RIGHT1=0;
-			LEFT0=1;
-			LEFT1=0;
-
-			printf("forwards");
-		}
-	
-		else if (d1>d){
-			//move motor 2 and 1 backward
-			RIGHT0=0;
-			RIGHT1=1;
-			LEFT0=0;
-			LEFT1=1;
-			printf("backwards");
-		}
 		
-		else if (d1>d2){
-			//move right back and left forward(turn right)
-			RIGHT0=0;
-			RIGHT1=1;
-			LEFT0=1;
-			LEFT1=0;
-		
-			printf("right");
-		}
-		
-		else if (d2>d1){
-			//move left back and right forward (turn left)
-			RIGHT0=1;
-			RIGHT1=0;
-			LEFT0=0;
-			LEFT1=1;
-			printf("left");
-		}
-		printf("\x1B[K"); // ANSI escape sequence: Clear to end of line
-		waitms(100);  // Wait 100ms before next round of measurements.
 	 }  
 }	
 
