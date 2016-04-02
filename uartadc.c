@@ -296,7 +296,7 @@ void main (void)
 			LEFT0=0;
 			LEFT1=1;
 			printf("down right\n");
-		}t
+		}
 		
 
 		else {//(command==MOV_DL){
