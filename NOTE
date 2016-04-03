@@ -1,0 +1,11 @@
+CHANGED PIN CONFIGURATION
+motor and wheel pins
+
+also, 
+gun control all in interupt 2
+so change the variable of "motor" for this to move. 
+0= gun  trigger loaded
+1= gun trigger shoot
+3= base towards right
+4- base towards left
+2, 5, 6, 7, 8, 9, 10, 11= up down angles. 
