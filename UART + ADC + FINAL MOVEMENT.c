@@ -42,12 +42,6 @@
 #define 	AIM_D	0x44
 #define 	AIM_L	0x42
 #define 	AIM_R	0x41
-
-#define 	AIM_UL	0x4A
-#define 	AIM_UR	0x49
-#define 	AIM_DL	0x46
-#define 	AIM_DR	0x45
-
 #define 	AIM_S	0x50    // shoot
 
 #define     	d        0.6 	//60cm - distance to keep in AUTO mode
@@ -186,56 +180,67 @@ void Timer2_ISR (void) interrupt 5
 	TF2H = 0; // Clear Timer2 interrupt flag
 	
 	pwm_count++;
+	
 	if(pwm_count>num) pwm_count=0;
 
 	if(motor==0){
-	num=19;
-	HIGH=pwm_count>4?0:1;
+		num=19;
+		HIGH=pwm_count>4?0:1;
 	}
+	
 	else if(motor==1){
-	num=19;
-	HIGH=pwm_count>15?0:1;
+		num=19;
+		HIGH=pwm_count>15?0:1;
 	}
+	
 	else if(motor==2){
-	num=10;
-	SERVO180=pwm_count>1?0:1;
+		num=10;
+		SERVO180=pwm_count>1?0:1;
 	}	
+	
 	else if(motor==3){
-	num=19;
-	BASEMOTOR=pwm_count>17?0:1;
+		num=19;
+		BASEMOTOR=pwm_count>17?0:1;
 	}
+	
 	else if(motor==4){
-	num=19;
-	BASEMOTOR=pwm_count>6?0:1;
+		num=19;
+		BASEMOTOR=pwm_count>6?0:1;
 	}
+	
 	else if(motor==5){
-	num=10;
-	SERVO180=pwm_count>2?0:1;
+		num=10;
+		SERVO180=pwm_count>2?0:1;
 	}
+	
 	else if(motor==6){
-	num=10;
-	SERVO180=pwm_count>3?0:1;
+		num=10;
+		SERVO180=pwm_count>3?0:1;
 	}
+	
 	else if(motor==7){
-	num=10;
-	SERVO180=pwm_count>4?0:1;
+		num=10;
+		SERVO180=pwm_count>4?0:1;
 	}
+	
 	else if(motor==8){
-	num=10;
-	SERVO180=pwm_count>5?0:1;
+		num=10;
+		SERVO180=pwm_count>5?0:1;
 	}
+	
 	else if(motor==9){
-	num=10;
-	SERVO180=pwm_count>6?0:1;
+		num=10;
+		SERVO180=pwm_count>6?0:1;
 	}
+	
 	else if(motor==10){
-	num=10;
-	SERVO180=pwm_count>7?0:1;
+		num=10;
+		SERVO180=pwm_count>7?0:1;
 	}
 	
 	else if(motor==11){
-	num=10;
-	SERVO180=pwm_count>8?0:1;
+		num=10;
+		SERVO180=pwm_count>8?0:1;
 	}
 
 }
@@ -413,7 +418,7 @@ void main (void)
 		}
 		
 		else if (command==AIM_DEF) {
-			
+			motor = 0;
 		}
 		
 		else if (command==AIM_U) {
@@ -430,14 +435,6 @@ void main (void)
 			motor = 3;
 		}
 		
-		else if (command==AIM_UL) {
-		}
-		
-		else if (command==AIM_UR) {
-		}
-		
-		else if (command==AIM_DL) {
-		}
 		
 		else if (command==AIM_S) {
 			motor = 1;
@@ -497,57 +494,54 @@ void main (void)
 		}
 		
 
-		else if (command==MOV_DEF)
-		{	
+		else {	
 			move = 4;
 			printf("DEFAULT\n");
 		}
 		
-		
-		
 		if (move==0){
 		//move right back and left forward(turn right)
-		RIGHT0=0;
-		RIGHT1=1;
-		LEFT0=1;
-		LEFT1=0;
+			RIGHT0=0;
+			RIGHT1=1;
+			LEFT0=1;
+			LEFT1=0;
 
-	}
+		}
 	
-	if (move==1){
+		if (move==1){
 		//move left back and right forward (turn left)
-		RIGHT0=1;
-		RIGHT1=0;
-		LEFT0=0;
-		LEFT1=1;
-	}
+			RIGHT0=1;
+			RIGHT1=0;
+			LEFT0=0;
+			LEFT1=1;
+		}
 	
-	if (move==2){
+		if (move==2){
 		//move motor 1 and 2 forward
-		RIGHT0=1;
-		RIGHT1=0;
-		LEFT0=1;
-		LEFT1=0;
+			RIGHT0=1;
+			RIGHT1=0;
+			LEFT0=1;
+			LEFT1=0;
 
-	}
+		}
 	
-	if (move==3){
+		if (move==3){
 		//move motor 2 and 1 backward
-		RIGHT0=0;
-		RIGHT1=1;
-		LEFT0=0;
-		LEFT1=1;
+			RIGHT0=0;
+			RIGHT1=1;
+			LEFT0=0;
+			LEFT1=1;
 
-	}
+		}
 
-	if (move==4){
+		if (move==4){
 		//off
-		RIGHT0=0;
-		RIGHT1=0;
-		LEFT0=0;
-		LEFT1=0;
+			RIGHT0=0;
+			RIGHT1=0;
+			LEFT0=0;
+			LEFT1=0;
 
-	}
+		}
 	}
 	
 	
