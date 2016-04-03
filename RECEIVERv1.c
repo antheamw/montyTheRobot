@@ -47,7 +47,7 @@
 #define     	d        0.6 	//60cm - distance to keep in AUTO mode
 
 #define VDD      3.325 // The measured value of VDD in volts
-#define NUM_INS  4
+#define NUM_INS  2
 
 #define		THRESHOLD 0.08	//+/- 80mV for voltage measurement
 
